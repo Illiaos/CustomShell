@@ -1,0 +1,4 @@
+day GetDate
+month GetDate
+year GetDate
+date getCurrentDate
