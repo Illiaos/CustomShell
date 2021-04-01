@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Threading;
 
 namespace CustomShell
 {
@@ -9,12 +11,18 @@ namespace CustomShell
             Execute execute = new Execute();
             string userInput = null;
             bool shellStatus = true;
-            while(shellStatus)
+            CommandState.Command c = CommandState.Instance.GetCommand();
+            while (shellStatus)
             {
-                Console.Write("> ");
-                userInput = Console.ReadLine();
-                execute.Input(userInput);
-                userInput = null;
+                if(ThreadPool.Instance.EmptyThreadList())
+                {
+                    Console.Write("> ");
+                    userInput = Console.ReadLine();
+                    execute.Input(userInput);
+                    Thread.Sleep(10);
+                    userInput = null;
+                    Console.WriteLine("STATE: " + c.state);
+                }
             }
         }
     }

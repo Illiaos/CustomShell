@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 public class DirectoryFunc
 {
@@ -73,19 +74,24 @@ public class DirectoryFunc
         commandsDirectory = new Dictionary<string, string>();
         ReadData();
     }
-    public void DirectoryFuncExecute(string[] command)
+    public void Data(object a)
     {
+
+    }
+    public void DirectoryFuncExecute()
+    {
+        var command = CommandState.Instance.GetCommand();
         Type thisType = this.GetType();
-        string methodName = commandsDirectory[command[0]];
+        string methodName = commandsDirectory[command.valueOne];
         MethodInfo methodInfo = thisType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
         MethodInfo genericMethod = methodInfo.MakeGenericMethod(typeof(string));
-        if (command.Length == 1)
+        if (command.length == 1)
         {
             genericMethod.Invoke(this, new object[] { null });
         }
-        else if (command.Length == 2)
+        else if (command.length == 2)
         {
-            genericMethod.Invoke(this, new object[] { command[1] });
+            genericMethod.Invoke(this, new object[] { command.valueTwo });
         }
         else
         {
@@ -131,6 +137,11 @@ public class DirectoryFunc
         {
             Console.WriteLine(i);
         }
+        return;
+    }
+    private void CurrentLocation<T>(string path)
+    {
+        Console.WriteLine(Environment.CurrentDirectory);
     }
     private void ReadData()
     {

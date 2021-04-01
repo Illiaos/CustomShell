@@ -1,3 +1,4 @@
 cd OpenFolder
 ls ListOfFiles
 mkdir CreateFolder
+pwd CurrentLocation

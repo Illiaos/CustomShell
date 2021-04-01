@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 public class Execute
 {
@@ -11,14 +12,15 @@ public class Execute
         dayTimeFunc = new DayTimeFunc();
         directoryFunc = new DirectoryFunc();
     }
-	public void  Input(string input)
+    public void Input(string input)
     {
         getCurrentType(input);
     }
     private void getCurrentType(string input)
     {
-        var splitedInput = input.Split(" ");
-        FunctionsCollection.Instance.FindCommand(splitedInput[0]);
+        CommandState.Instance.CreateCommand(input);
+        var currentState = CommandState.Instance.GetCommand();
+        FunctionsCollection.Instance.FindCommand(currentState.valueOne);
         var listId = FunctionsCollection.Instance.getListId();
         var commandId = FunctionsCollection.Instance.getIndex();
         if (listId == -1 || commandId == -1)
@@ -31,16 +33,15 @@ public class Execute
             {
                 case 1:
                     {
-                        dayTimeFunc.DayTimeFuncExecute(splitedInput,commandId);
+                        //dayTimeFunc.DayTimeFuncExecute(splitedInput, commandId);
                         break;
                     }
                 case 2:
                     {
-                        directoryFunc.DirectoryFuncExecute(splitedInput);
+                        ThreadPool.Instance.AddTask(directoryFunc.DirectoryFuncExecute);
                         break;
                     }
             }
         }
     }
-
 }
