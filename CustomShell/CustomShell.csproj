@@ -3,6 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <ApplicationManifest>ListOfFunctions\app.manifest</ApplicationManifest>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ListOfFunctions\**" />
+    <EmbeddedResource Remove="ListOfFunctions\**" />
+    <None Remove="ListOfFunctions\**" />
+  </ItemGroup>
 
 </Project>

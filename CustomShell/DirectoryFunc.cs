@@ -6,108 +6,39 @@ using System.Threading;
 
 public class DirectoryFunc
 {
-    /*public static void CreateDirectory(string name)
-    {
-        string currentPath = Directory.GetCurrentDirectory();
-        //Console.WriteLine("PATH: " + currentPath);
-        if(Directory.Exists(currentPath+"/"+name))
-        {
-            Console.WriteLine("EXIST");
-        }
-    }
-    public static void DeleteFolder(string path)
-    {
-        if(Directory.Exists(path))
-        {
-            Directory.Delete(path);
-        }
-        else
-        {
-            Console.WriteLine($"Wrong path: {path}");
-        }
-    }
-    public static void CheckExistOfFolder(string path)
-    {
-        if(DirectoryExist(path))
-        {
-            Console.WriteLine($"Directory Exist: {path}");
-        }
-        else
-        {
-            Console.WriteLine($"Directory is not Exist: {path}");
-        }
-    }
-    private static bool DirectoryExist(string path)
-    {
-        if(Directory.Exists(path))
-        {
-            return true;
-        }
-        return false;
-    }
-*//*    public static void GetCreationTime(string path)
-    {
-        if(!DirectoryExist(path))
-        {
-            Console.WriteLine($"Directory is not Exist: {path}");
-            return;
-        }
-        DateTime dt = Directory.GetCreationTime(path);
-        Console.WriteLine($"Creation Time: {dt}");
-    }*/
-    /*    public static void GetCurrentDirectory()
-        {
-            string path = Directory.GetCurrentDirectory();
-            Console.WriteLine($"PATH: {path}");
-        }*/
-    /*    public static void OpenDirectory(string path)
-        {
-
-        }*//*
-        public static void OpenStartDirectory()
-        {
-            Environment.CurrentDirectory = @"c:\";
-        }*/
-    private Dictionary<string, string> commandsDirectory;
-    public DirectoryFunc()
-    {
-        commandsDirectory = new Dictionary<string, string>();
-        ReadData();
-    }
-    public void Data(object a)
-    {
-
-    }
     public void DirectoryFuncExecute()
     {
         var command = CommandState.Instance.GetCommand();
         Type thisType = this.GetType();
-        string methodName = commandsDirectory[command.valueOne];
+        string methodName = command.executionFunc;
         MethodInfo methodInfo = thisType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-        MethodInfo genericMethod = methodInfo.MakeGenericMethod(typeof(string));
-        if (command.length == 1)
+        methodInfo?.Invoke(this,null);
+    }
+    private void MoveUp()
+    {
+        CommandState.Command command = CommandState.Instance.GetCommand();
+        if(command.length == 1)
         {
-            genericMethod.Invoke(this, new object[] { null });
-        }
-        else if (command.length == 2)
-        {
-            genericMethod.Invoke(this, new object[] { command.valueTwo });
+            var path = Directory.GetParent(Environment.CurrentDirectory);
+            Environment.CurrentDirectory = path.ToString();
         }
         else
         {
             Console.WriteLine("Wrong Command");
+            return;
         }
     }
-    private void OpenFolder<T>(string name)
+    private void OpenFolder()
     {
-        if (string.IsNullOrWhiteSpace(name))
+        CommandState.Command command = CommandState.Instance.GetCommand();
+        if (/*string.IsNullOrWhiteSpace(command.values[1]) ||*/ command.length == 1)
         {
             Environment.CurrentDirectory = @"c:\";
             return;
         }
         else
         {
-            string path = Environment.CurrentDirectory + "\\" + name;
+            string path = Environment.CurrentDirectory + "\\" + command.values[1];
             if (!Directory.Exists(path))
             {
                 Console.WriteLine("Folder is not Exist");
@@ -116,16 +47,17 @@ public class DirectoryFunc
             Environment.CurrentDirectory = path;
         }
     }
-    private void CreateFolder<T>(string name)
+    private void CreateFolder()
     {
+        CommandState.Command command = CommandState.Instance.GetCommand();
         string path = Environment.CurrentDirectory;
-        if (Directory.Exists(path + "/" + name))
+        if (Directory.Exists(path + "/" + command.values[1]))
         {
             return;
         }
-        Directory.CreateDirectory(path + "/" + name);
+        Directory.CreateDirectory(path + "/" + command.values[1]);
     }
-    private void ListOfFiles<T>(string path)
+    private void ListOfFiles()
     {
         var listOfDir = Directory.GetDirectories(Environment.CurrentDirectory);
         var listOfFiles = Directory.GetFiles(Environment.CurrentDirectory);
@@ -139,20 +71,30 @@ public class DirectoryFunc
         }
         return;
     }
-    private void CurrentLocation<T>(string path)
+    private void CurrentLocation()
     {
         Console.WriteLine(Environment.CurrentDirectory);
     }
-    private void ReadData()
+    private void RenameFolder()
     {
-        StreamReader stringReader = new StreamReader("../../../DatFiles/directory_func.dat");
-        string lines = stringReader.ReadLine();
-        while (lines != null)
+        CommandState.Command command = CommandState.Instance.GetCommand();
+        string path = Environment.CurrentDirectory + "\\" + command.values[1];
+        if (!Directory.Exists(path))
         {
-            var splitedStrings = lines.Split(" ");
-            commandsDirectory.Add(splitedStrings[0], splitedStrings[1]);
-            lines = stringReader.ReadLine();
+            Console.WriteLine("Folder is not Exist");
+            return;
         }
+        Directory.Move(command.values[1], command.values[2]);
     }
-
+    private void RemoveFolder()
+    {
+        CommandState.Command command = CommandState.Instance.GetCommand();
+        string path = Environment.CurrentDirectory + "\\" + command.values[1];
+        if(!Directory.Exists(path))
+        {
+            Console.WriteLine("Folder is not Exist");
+            return;
+        }
+        Directory.Delete(path);
+    }
 }

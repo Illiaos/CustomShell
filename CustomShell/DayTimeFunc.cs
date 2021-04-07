@@ -5,62 +5,93 @@ using System.Reflection;
 
 public class DayTimeFunc
 {
-    private Dictionary<string, string> commands;
-    private DateTime dateTime;
-    public DayTimeFunc()
+    DateTime dt;
+
+    private bool foundError = false;
+    public void DayTimeExecute()
     {
-        commands = new Dictionary<string, string>();
-        dateTime = DateTime.UtcNow.Date;
-        ReadData();
-    }
-    public void DayTimeFuncExecute(string[] commandSplit, int commandIndex)
-    {
+        dt = DateTime.Now;
+        foundError = false;
+        var command = CommandState.Instance.GetCommand();
         Type thisType = this.GetType();
-        if(commands.ContainsKey(commandSplit[1]))
+        string methodName = command.executionFunc;
+        MethodInfo methodInfo = thisType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+        methodInfo?.Invoke(this, null);
+    }
+
+    private void DayTimeMainFunc()
+    {
+        CommandState.Command command = CommandState.Instance.GetCommand();
+        if(command.length == 1)
         {
-            string methodName = commands[commandSplit[1]];
-            MethodInfo theMethod = thisType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-            theMethod.Invoke(this, new object[] { commandSplit[1] });
+            Console.WriteLine(DateTime.Now);
+            return;
         }
         else
         {
-            Console.WriteLine("Wrong Command use help");
+            string finalPrint = "";
+            for(int i=1; i< command.length; i++)
+            {
+                finalPrint += GetFormatingData(command.values[i]) + " ";
+            }
+            if(foundError)
+            {
+                Console.WriteLine("Wrong Command");
+                return;
+            }
+            Console.WriteLine(finalPrint);
         }
     }
-    private void GetDate(string key)
+    private string GetFormatingData(string key)
     {
-        switch(key)
+        switch (key)
         {
-            case "day":
+            case "%A":
                 {
-                    Console.WriteLine(dateTime.ToString("dd"));
-                    break;
+                    return dt.DayOfWeek.ToString();
                 }
-            case "month":
+            case "%D":
                 {
-                    Console.WriteLine(dateTime.ToString("MM"));
-                    break;
+                    return dt.Month.ToString();
                 }
-            case "year":
+            case "%d":
                 {
-                    Console.WriteLine(dateTime.ToString("yyyy"));
-                    break;
+                    return dt.Day.ToString();
+                }
+            case "%H":
+                {
+                    return dt.Hour.ToString();
+                }
+            case "%j":
+                {
+                    return dt.DayOfYear.ToString();
+                }
+            case "%m":
+                {
+                    return dt.Month.ToString();
+                }
+            case "%M":
+                {
+                    return dt.Minute.ToString();
+                }
+            case "%S":
+                {
+                    return dt.Second.ToString();
+                }
+            case "%u":
+                {
+                    return dt.DayOfWeek.ToString();
+                }
+            case "%Y":
+                {
+                    return dt.Year.ToString();
+                }
+            default:
+                {
+                    foundError = true;
+                    return "Wrong Command";
                 }
         }
-    }
-    private void getCurrentDate()
-    {
-        Console.WriteLine(dateTime.ToString("dd/MM/yyyy"));
-    }
-    private void ReadData()
-    {
-        StreamReader stringReader = new StreamReader("../../../DatFiles/day_func.dat");
-        string lines = stringReader.ReadLine();
-        while(lines != null)
-        {
-            var splitedStrings = lines.Split(" ");
-            commands.Add(splitedStrings[0], splitedStrings[1]);
-            lines = stringReader.ReadLine();
-        }
+
     }
 }

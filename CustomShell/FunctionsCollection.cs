@@ -5,18 +5,83 @@ using System.IO;
 public class FunctionsCollection
 {
     public static FunctionsCollection Instance;
-    private List<string> dayTimeFunctionality = new List<string>();
-    private List<string> directoryFunctionality = new List<string>();
-    private int index = -1;
-    private int listId = -1;
+    private Dictionary<string, string> directoryFunctionality = new Dictionary<string, string>();
+    private Dictionary<string, string> networkFunctionality = new Dictionary<string, string>();
+    private Dictionary<string, string> zipFunctionality = new Dictionary<string, string>();
+    private Dictionary<string, string> dateTimeFunctionality = new Dictionary<string, string>();
+    private uint dictionaryId = 0;
     private bool found = false;
     public FunctionsCollection()
     {
-        dayTimeFunctionality.Add("date");
-        ReadData("DirectoryFunctions.dat", directoryFunctionality);
+        ReadData("directory_func.dat", directoryFunctionality);
+        ReadData("network_func.dat", networkFunctionality);
+        ReadData("zip_func.dat", zipFunctionality);
+        ReadData("day_func.dat", dateTimeFunctionality);
         Instance = this;
     }
+    public string GetValue(string key, uint index)
+    {
+        switch(index)
+        {
+            case 1:
+                {
+                    return directoryFunctionality[key];
+                }
+            case 2:
+                {
+                    return networkFunctionality[key];
+                }
+            case 3:
+                {
+                    return zipFunctionality[key];
+                }
+            case 4:
+                {
+                    return dateTimeFunctionality[key];
+                }
+        }
+        return "";
+    }
     public bool FindCommand(string command)
+    {
+        found = false;
+        dictionaryId = 0;
+        if(!found && directoryFunctionality.ContainsKey(command))
+        {
+            found = true;
+            dictionaryId = 1;
+            return true;
+        }
+        else if(!found && networkFunctionality.ContainsKey(command))
+        {
+            found = true;
+            dictionaryId = 2;
+            return true;
+        }
+        else if(!found && zipFunctionality.ContainsKey(command))
+        {
+            found = true;
+            dictionaryId = 3;
+            return true;
+        }
+        else if(!found && dateTimeFunctionality.ContainsKey(command))
+        {
+            found = true;
+            dictionaryId = 4;
+            return true;
+        }
+        else
+        {
+            dictionaryId = 0;
+            found = false;
+            return false;
+        }
+    }
+    public uint GetDictionaryId()
+    {
+        return dictionaryId;
+    }
+/*    public bool FindCommand(string command)
     {
         found = false;
         listId = -1;
@@ -42,8 +107,8 @@ public class FunctionsCollection
             listId = -1;
         }
         return false;
-    }
-    public int getIndex()
+    }*/
+/*    public int getIndex()
     {
         if(found)
         {
@@ -53,8 +118,8 @@ public class FunctionsCollection
         {
             return -1;
         }
-    }
-    public int getListId()
+    }*/
+/*    public int getListId()
     {
         if(found)
         {
@@ -64,22 +129,23 @@ public class FunctionsCollection
         {
             return -1;
         }
-    }
-    public string getCommandDayTime(int index)
+    }*/
+/*    public string getCommandDayTime(int index)
     {
         return dayTimeFunctionality[index];
     }
     public string getCommandDirectory(int index)
     {
         return directoryFunctionality[index];
-    }
-    private void ReadData(string fileName, List<string> storeList)
+    }*/
+    private void ReadData(string fileName, Dictionary<string, string> dictionatyStore)
     {
-        StreamReader stringReader = new StreamReader("../../../ListOfFunctions/"+fileName);
+        StreamReader stringReader = new StreamReader("../../../DatFiles/"+fileName);
         string line = stringReader.ReadLine();
         while (line != null)
         {
-            storeList.Add(line);
+            var splitedString = line.Split(" ");
+            dictionatyStore.Add(splitedString[0], splitedString[1]);
             line = stringReader.ReadLine();
         }
     }

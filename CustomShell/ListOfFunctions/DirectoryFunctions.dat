@@ -2,3 +2,5 @@ cd
 ls
 mkdir
 pwd
+rf
+rmdir

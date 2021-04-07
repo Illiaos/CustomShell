@@ -1,4 +1,7 @@
 cd OpenFolder
+cd.. MoveUp
 ls ListOfFiles
 mkdir CreateFolder
 pwd CurrentLocation
+rf RenameFolder
+rmdir RemoveFolder

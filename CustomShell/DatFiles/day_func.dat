@@ -1,4 +1,1 @@
-day GetDate
-month GetDate
-year GetDate
-date getCurrentDate
+date DayTimeMainFunc
