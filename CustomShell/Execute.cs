@@ -8,6 +8,7 @@ public class Execute
     private DirectoryFunc directoryFunc = null;
     private NetworkFunc networkFunc = null;
     private ZipFunc zipFunc = null;
+    private ProcessExecute processFunc = null;
     public Execute()
     {
         FunctionsCollection f = new FunctionsCollection();
@@ -15,6 +16,7 @@ public class Execute
         directoryFunc = new DirectoryFunc();
         networkFunc = new NetworkFunc();
         zipFunc = new ZipFunc();
+        processFunc = new ProcessExecute();
     }
     public void Input(string input)
     {
@@ -54,6 +56,11 @@ public class Execute
                 case 4:
                     {
                         ThreadPool.Instance.AddTask(dayTimeFunc.DayTimeExecute);
+                        break;
+                    }
+                case 5:
+                    {
+                        ThreadPool.Instance.AddTask(processFunc.ProcessExecution);
                         break;
                     }
             }

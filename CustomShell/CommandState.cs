@@ -76,6 +76,7 @@ public class CommandState
         {
             if(prevSelected == -1)
             {
+                EventDataBase.TriggerEvent("PRINT_LABEL");
                 return null;
             }
             else

@@ -51,6 +51,7 @@ public class ThreadPool
                     thread.Start();
                     ReadyTasks.Dequeue();
                     thread.Join();
+                    EventDataBase.TriggerEvent("PRINT_LABEL");
                     CommandState.Command commamd = CommandState.Instance.GetCommand();
                 }
             } while (true);
@@ -77,7 +78,7 @@ public class ThreadPool
         }
         else
         {
-            Thread.Sleep(10);
+            //Thread.Sleep(10);
             return true;
         }
     }

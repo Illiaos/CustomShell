@@ -9,6 +9,7 @@ public class FunctionsCollection
     private Dictionary<string, string> networkFunctionality = new Dictionary<string, string>();
     private Dictionary<string, string> zipFunctionality = new Dictionary<string, string>();
     private Dictionary<string, string> dateTimeFunctionality = new Dictionary<string, string>();
+    private Dictionary<string, string> processFunctionality = new Dictionary<string, string>();
     private uint dictionaryId = 0;
     private bool found = false;
     public FunctionsCollection()
@@ -17,6 +18,7 @@ public class FunctionsCollection
         ReadData("network_func.dat", networkFunctionality);
         ReadData("zip_func.dat", zipFunctionality);
         ReadData("day_func.dat", dateTimeFunctionality);
+        ReadData("process_func.dat", processFunctionality);
         Instance = this;
     }
     public string GetValue(string key, uint index)
@@ -38,6 +40,10 @@ public class FunctionsCollection
             case 4:
                 {
                     return dateTimeFunctionality[key];
+                }
+            case 5:
+                {
+                    return processFunctionality[key];
                 }
         }
         return "";
@@ -68,6 +74,12 @@ public class FunctionsCollection
         {
             found = true;
             dictionaryId = 4;
+            return true;
+        }
+        else if(!found && processFunctionality.ContainsKey(command))
+        {
+            found = true;
+            dictionaryId = 5;
             return true;
         }
         else
